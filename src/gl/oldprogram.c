@@ -180,7 +180,7 @@ void APIENTRY_GL4ES gl4es_glProgramStringARB(GLenum target, GLenum format, GLsiz
         glstate->glsl->error_ptr = 0;
         return;
     }
-    gl4es_glCompileShader(old->shader->id);
+    gl4es_glCompileShader_now(old->shader->id);
     GLint res = 0;
     gl4es_glGetShaderiv(old->shader->id, GL_COMPILE_STATUS, &res);
     if(res!=GL_TRUE) {

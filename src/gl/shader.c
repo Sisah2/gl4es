@@ -60,6 +60,9 @@ GLuint APIENTRY_GL4ES gl4es_glCreateShader(GLenum shaderType) {
     }
     glshader->need.need_texcoord = -1;
 
+    // FIXME: Mark as always-deferred for now
+    glshader->deferred = 1;
+
     // all done
     return shader;
 }
@@ -115,17 +118,28 @@ void APIENTRY_GL4ES gl4es_glDeleteShader(GLuint shader) {
     }
 }
 
+void gl4es_glCompileShader_now(GLuint shader){
+    CHECK_SHADER(void, shader)
+    glshader->deferred = 0;
+    gl4es_glCompileShader(shader);
+}
+
 void APIENTRY_GL4ES gl4es_glCompileShader(GLuint shader) {
     DBG(printf("glCompileShader(%d)\n", shader);)
     // look for the shader
     CHECK_SHADER(void, shader)
+
+    if(glshader->deferred){
+        noerrorShim();
+        return;
+    }
 
     glshader->compiled = 1;
     LOAD_GLES2(glCompileShader);
     if(gles_glCompileShader) {
         gles_glCompileShader(glshader->id);
         errorGL();
-        if(globals4es.logshader) {
+        if(1 || globals4es.logshader) {
             // get compile status and print shaders sources if compile fail...
             LOAD_GLES2(glGetShaderiv);
             LOAD_GLES2(glGetShaderInfoLog);
@@ -235,7 +249,7 @@ void redoShader(GLuint shader, shaderconv_need_t *need) {
     // send source to GLES2 hardware if any
     gles_glShaderSource(shader, 1, (const GLchar * const*)((glshader->converted)?(&glshader->converted):(&glshader->source)), NULL);
     // recompile...
-    gl4es_glCompileShader(glshader->id);
+    gl4es_glCompileShader_now(glshader->id);
 }
 
 void APIENTRY_GL4ES gl4es_glGetShaderSource(GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *source) {

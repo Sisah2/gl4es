@@ -38,6 +38,12 @@ void APIENTRY_GL4ES gl4es_glAttachShader(GLuint program, GLuint shader) {
     }
     glprogram->attach[glprogram->attach_size++] = glshader->id;
     glshader->attached++;
+
+    if(glshader->deferred){
+        noerrorShim();
+        return;
+    }
+
     // save last vertex or fragment attached
     if(glshader->type==GL_VERTEX_SHADER && !glprogram->last_vert)
         glprogram->last_vert = glshader;
@@ -727,6 +733,76 @@ void APIENTRY_GL4ES gl4es_glProgramBinary(GLuint program, GLenum binaryFormat, c
         errorShim(GL_INVALID_OPERATION);
 }
 
+static shader_t* find_shader(int id){
+    khint_t k;
+    shader_t* glshader;
+    khash_t(shaderlist) *shaders = glstate->glsl->shaders;
+    k = kh_get(shaderlist, shaders, id);
+    if(k != kh_end(shaders)){
+        glshader = kh_value(shaders, k);
+    }else{
+        glshader = NULL;
+    }
+    return glshader;
+}
+
+static shader_t* merge_and_compile(program_t* glprogram, GLuint type){
+    size_t total_size, current_size;
+    char* new_source;
+    char* loc;
+    shader_t* top_level = NULL;
+    int i;
+    int glname;
+    shader_t* glshader;
+
+    // FIXME: Return the shader if not deferred
+
+    // Calc total size
+    total_size = 0;
+    for(i=0; i<glprogram->attach_size; i++){
+        glshader = find_shader(glprogram->attach[i]);
+        if(glshader->type == type){
+            if(! top_level){
+                top_level = glshader;
+            }
+            total_size += strlen(glshader->source);
+            total_size ++; // for LF
+        }
+    }
+    if(! top_level){
+        // Not found any shader for specified type
+        return NULL;
+    }
+
+    new_source = loc = malloc(total_size);
+
+    // Concat sources
+    for(i=0; i<glprogram->attach_size; i++){
+        glshader = find_shader(glprogram->attach[i]);
+        if(glshader->type == type){
+            printf("MERGE: %d\n", glshader->id);
+            current_size = strlen(glshader->source);
+            memcpy(loc, glshader->source, current_size);
+            loc += current_size;
+            *loc = '\n';
+            loc ++;
+        }
+    }
+    *loc = 0;
+
+    printf("CONCAT:\n%s\n", new_source);
+
+    // Compile shader
+    glname = top_level->id;
+    top_level->deferred = 0;
+    gl4es_glShaderSource(glname, 1, &new_source, NULL);
+    gl4es_glCompileShader_now(glname);
+    gl4es_glAttachShader(glprogram->id, glname);
+
+
+    return top_level;
+}
+
 void APIENTRY_GL4ES gl4es_glLinkProgram(GLuint program) {
     DBG(printf("glLinkProgram(%d)\n", program);)
     FLUSH_BEGINEND;
@@ -738,10 +814,23 @@ void APIENTRY_GL4ES gl4es_glLinkProgram(GLuint program) {
     // check if attached shaders are compatible in term of varying...
     shaderconv_need_t needs = {0};
     needs.need_texcoord = -1;
+
+    // Realize deferred-compiled shaders first(if it was there any)
+    if(!glprogram->last_vert){
+        glprogram->last_vert = merge_and_compile(glprogram, GL_VERTEX_SHADER);
+    }
+    if(!glprogram->last_frag){
+        glprogram->last_frag = merge_and_compile(glprogram, GL_FRAGMENT_SHADER);
+    }
+
     // first get the compatible need
     for (int i=0; i<glprogram->attach_size; i++) {
-        accumShaderNeeds(glprogram->attach[i], &needs);
+        if(glprogram->attach[i] == (glprogram->last_vert ? glprogram->last_vert->id : 0) ||
+           glprogram->attach[i] == (glprogram->last_frag ? glprogram->last_frag->id : 0)){
+            accumShaderNeeds(glprogram->attach[i], &needs);
+        }
     }
+
     // create one vertex shader if needed!
     if(!glprogram->last_vert) {
         glprogram->default_need = (shaderconv_need_t*)malloc(sizeof(shaderconv_need_t));
@@ -749,7 +838,7 @@ void APIENTRY_GL4ES gl4es_glLinkProgram(GLuint program) {
         glprogram->default_vertex = 1;
         GLenum vtx = gl4es_glCreateShader(GL_VERTEX_SHADER);
         gl4es_glShaderSource(vtx, 1, fpe_VertexShader(&needs, NULL), NULL);
-        gl4es_glCompileShader(vtx);
+        gl4es_glCompileShader_now(vtx);
         gl4es_glAttachShader(glprogram->id, vtx);
     }
     // create one fragment shader if needed!
@@ -759,19 +848,27 @@ void APIENTRY_GL4ES gl4es_glLinkProgram(GLuint program) {
         glprogram->default_fragment = 1;
         GLenum vtx = gl4es_glCreateShader(GL_FRAGMENT_SHADER);
         gl4es_glShaderSource(vtx, 1, fpe_FragmentShader(&needs, NULL), NULL);
-        gl4es_glCompileShader(vtx);
+        gl4es_glCompileShader_now(vtx);
         gl4es_glAttachShader(glprogram->id, vtx);
     }
     int compatible = 1;
     // now is everyone ok?
     for (int i=0; i<glprogram->attach_size && compatible; i++) {
-        compatible = isShaderCompatible(glprogram->attach[i], &needs);
+        if(glprogram->attach[i] == (glprogram->last_vert ? glprogram->last_vert->id : 0) ||
+           glprogram->attach[i] == (glprogram->last_frag ? glprogram->last_frag->id : 0)){
+            // Check for really-used shaders
+            compatible = isShaderCompatible(glprogram->attach[i], &needs);
+        }
     }
     // someone is not compatible, redoing shaders...
     if(!compatible) {
         DBG(printf("Need to redo some shaders...\n");)
         for (int i=0; i<glprogram->attach_size; i++) {
-            redoShader(glprogram->attach[i], &needs);
+            if(glprogram->attach[i] == (glprogram->last_vert ? glprogram->last_vert->id : 0) ||
+               glprogram->attach[i] == (glprogram->last_frag ? glprogram->last_frag->id : 0)){
+                // Check for really-used shaders
+                redoShader(glprogram->attach[i], &needs);
+            }
         }
     }
     // check if Built-in VA are used, and if so, bind them to their proper location

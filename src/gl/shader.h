@@ -31,6 +31,8 @@ typedef struct shader_s {
     char*           converted;  // converted source (or null if nothing)
     // shaderconv
     shaderconv_need_t  need;    // the varying need / provide of the shader
+    // deferred shader
+    int deferred; // flag if shader compilation is deferred at the link time
 } shader_t;
 
 KHASH_MAP_DECLARE_INT(shaderlist, shader_t *);
@@ -38,6 +40,7 @@ KHASH_MAP_DECLARE_INT(shaderlist, shader_t *);
 GLuint APIENTRY_GL4ES gl4es_glCreateShader(GLenum shaderType);
 void APIENTRY_GL4ES gl4es_glDeleteShader(GLuint shader);
 void APIENTRY_GL4ES gl4es_glCompileShader(GLuint shader);
+void gl4es_glCompileShader_now(GLuint shader);
 void APIENTRY_GL4ES gl4es_glShaderSource(GLuint shader, GLsizei count, const GLchar * const *string, const GLint *length);
 void APIENTRY_GL4ES gl4es_glGetShaderSource(GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *source);
 GLboolean APIENTRY_GL4ES gl4es_glIsShader(GLuint shader);
