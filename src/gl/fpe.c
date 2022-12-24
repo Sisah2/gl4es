@@ -1437,6 +1437,7 @@ void realize_glenv(int ispoint, int first, int count, GLenum type, const void* i
             else
                 gles_glDisableVertexAttribArray(i);
         }
+        dirty = 1; // DEBUG
         // check if new value has to be sent to hardware
         if(v->enabled) {
             // array case

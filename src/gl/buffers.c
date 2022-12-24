@@ -738,20 +738,20 @@ void realize_bufferIndex()
 
 void unboundBuffers()
 {
-    if(!glstate->bind_buffer.used)
-        return;
+ //   if(!glstate->bind_buffer.used)
+ //       return;
     LOAD_GLES(glBindBuffer);
-    if(glstate->bind_buffer.array) {
+ //   if(glstate->bind_buffer.array) {
         glstate->bind_buffer.array = 0;
         gles_glBindBuffer(GL_ARRAY_BUFFER, 0);
         DBG(printf("Bind buffer %d to GL_ARRAY_BUFFER\n", 0);)
-    }
-    if(glstate->bind_buffer.index) {
+//    }
+//    if(glstate->bind_buffer.index) {
         glstate->bind_buffer.index = 0;
         glstate->bind_buffer.want_index = 0;
         gles_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         DBG(printf("Bind buffer %d to GL_ELEMENT_ARRAY_BUFFER\n", 0);)
-    }
+//    }
     glstate->bind_buffer.used = 0;
 }
 
