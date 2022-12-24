@@ -162,6 +162,23 @@ void APIENTRY_GL4ES gl4es_glBindBuffer(GLenum target, GLuint buffer) {
     noerrorShim();
 }
 
+static void fixup_binding(GLuint target /* 0 for unbinding */, GLuint buffer){
+    if(! buffer) return; // Debug
+    if(glstate->bind_buffer.array == buffer && target != GL_ARRAY_BUFFER){
+        printf("I guess array buffer %d was bound and unbound implicitly\n", buffer);
+        glstate->bind_buffer.array = 0;
+        //FIXME: Update used
+
+    }
+    if(glstate->bind_buffer.index == buffer && target != GL_ELEMENT_ARRAY_BUFFER){
+        printf("I guess index buffer %d was bound and unbound implicitly\n", buffer);
+        glstate->bind_buffer.index = 0;
+        //FIXME: Update used, want
+    }
+    glstate->bind_buffer.used = (glstate->bind_buffer.index && glstate->bind_buffer.array)?1:0;
+}
+
+
 void APIENTRY_GL4ES gl4es_glBufferData(GLenum target, GLsizeiptr size, const GLvoid * data, GLenum usage) {
     DBG(printf("glBufferData(%s, %zi, %p, %s)\n", PrintEnum(target), size, data, PrintEnum(usage));)
 	if (!buffer_target(target)) {
@@ -186,6 +203,7 @@ void APIENTRY_GL4ES gl4es_glBufferData(GLenum target, GLsizeiptr size, const GLv
         rebind_real_buff_arrays(buff->real_buffer, 0);
         LOAD_GLES(glDeleteBuffers);
         gles_glDeleteBuffers(1, &buff->real_buffer);
+        fixup_binding(0, buff->real_buffer);
         // what about VA already pointing there?
         buff->real_buffer = 0;
     }
@@ -244,6 +262,7 @@ void APIENTRY_GL4ES gl4es_glNamedBufferData(GLuint buffer, GLsizeiptr size, cons
     if(buff->real_buffer && !go_real) {
         LOAD_GLES(glDeleteBuffers);
         gles_glDeleteBuffers(1, &buff->real_buffer);
+        fixup_binding(0, buff->real_buffer);
         // what about VA already pointing there?
         buff->real_buffer = 0;
     }
@@ -350,6 +369,7 @@ void APIENTRY_GL4ES gl4es_glDeleteBuffers(GLsizei n, const GLuint * buffers) {
                         rebind_real_buff_arrays(buff->real_buffer, 0);  // unbind
                         LOAD_GLES(glDeleteBuffers);
                         gles_glDeleteBuffers(1, &buff->real_buffer);
+                        fixup_binding(0, buff->real_buffer);
                     }
                     if (glstate->vao->vertex == buff)
                         glstate->vao->vertex = NULL;
@@ -703,6 +723,7 @@ void bindBuffer(GLenum target, GLuint buffer)
         DBG(printf("Bind buffer %d to GL_ARRAY_BUFFER\n", buffer);)
         glstate->bind_buffer.array = buffer;
         gles_glBindBuffer(target, buffer);
+        fixup_binding(target, buffer);
         
     } else if (target==GL_ELEMENT_ARRAY_BUFFER) {
         glstate->bind_buffer.want_index = buffer;
@@ -711,6 +732,7 @@ void bindBuffer(GLenum target, GLuint buffer)
         glstate->bind_buffer.index = buffer;
         DBG(printf("Bind buffer %d to GL_ELEMENT_ARRAY_BUFFER\n", buffer);)
         gles_glBindBuffer(target, buffer);
+        fixup_binding(target, buffer);
     } else {
         LOGE("Warning, unhandled Buffer type %s in bindBuffer\n", PrintEnum(target));
         return;
@@ -731,6 +753,7 @@ void realize_bufferIndex()
     if(glstate->bind_buffer.index != glstate->bind_buffer.want_index) {
         glstate->bind_buffer.index = glstate->bind_buffer.want_index;
         gles_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, glstate->bind_buffer.index);
+        fixup_binding(GL_ELEMENT_ARRAY_BUFFER, glstate->bind_buffer.index);
         DBG(printf("Bind buffer %d to GL_ELEMENT_ARRAY_BUFFER\n", glstate->bind_buffer.index);)
         glstate->bind_buffer.used = (glstate->bind_buffer.index && glstate->bind_buffer.array)?1:0;
     }
