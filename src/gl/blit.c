@@ -379,6 +379,11 @@ void gl4es_blitTexture(GLuint texture,
     if(glstate->actual_tex2d[0] != texture)
         gles_glBindTexture(GL_TEXTURE_2D, texture);
 
+    // FIXME: On framebuffer blitting, we have to disable filtering since 
+    //        Framebuffer texture do not have MipMaps
+    LOAD_GLES(glTexParameteri);
+    gles_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
     if(hardext.esversion==1) {
         if(!IS_TEX2D(tmp))
             gles_glEnable(GL_TEXTURE_2D);
