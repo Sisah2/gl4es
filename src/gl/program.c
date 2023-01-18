@@ -572,6 +572,8 @@ static void fill_program(program_t *glprogram)
                     if(j) {
                         gluniform->name = malloc(strlen(name)+1+5);
                         sprintf(gluniform->name, "%s[%d]", name, j);
+                        // Renew id with index
+                        id = gles_glGetUniformLocation(glprogram->id, gluniform->name);
                     } else
                         gluniform->name = strdup(name);
                     gluniform->id = id;
@@ -595,7 +597,6 @@ static void fill_program(program_t *glprogram)
                     }
                     DBG(printf(" uniform #%d : \"%s\"%s type=%s size=%d\n", id, gluniform->name, gluniform->builtin?" (builtin) ":"", PrintEnum(gluniform->type), gluniform->size);)
                     if(gluniform->size==1) ++glprogram->num_uniform;
-                    id++;
                 }
                 uniform_cache += uniformsize(type)*size;
             }
