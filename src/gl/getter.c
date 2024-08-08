@@ -205,6 +205,10 @@ void BuildExtensionsList() {
             strcat(extensions, "GL_ARB_clip_control ");
             strcat(extensions, "GL_EXT_clip_control ");
         }
+        if(hardext.depthclamp) {
+            strcat(extensions, "GL_ARB_depth_clamp ");
+            strcat(extensions, "GL_EXT_depth_clamp ");
+        }
         if(hardext.depthtex) {
             strcat(extensions, "GL_EXT_depth_texture ");
             strcat(extensions, "GL_ARB_depth_texture ");

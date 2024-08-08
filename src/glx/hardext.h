@@ -47,6 +47,7 @@ typedef struct _hardext {
     int dxt5angle;      // GL_ANGLE_texture_compression_dxt5
     int floatfbo;       // GL_EXT_color_buffer_float
     int halffloatfbo;   // GL_EXT_color_buffer_half_float
+    int depthclamp;   // GL_EXT_depth_clamp
     int rgb332;         // GL_AOS4_texture_format_RGB332
     int rgb332rev;      // GL_AOS4_texture_format_RGB332REV
     int rgba1555rev;    // GL_AOS4_texture_format_RGBA1555REV
