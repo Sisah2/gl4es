@@ -612,9 +612,9 @@ const char* const* fpe_VertexShader(shaderconv_need_t* need, fpe_state_t *state)
         tg[0] = state->texgen[i].texgen_s;
         tg[1] = state->texgen[i].texgen_t;
         tg[2] = state->texgen[i].texgen_r;
-        tg[3] = state->texgen[i].texgen_q;
-        int ntc = texnsize[t-1];
+        tg[3] = state->texgen[i].texgen_q;        
         if(t) {
+            int ntc = texnsize[t-1];
             if(comments) {
                 sprintf(buff, "// texture %d active: %X %s %s\n", i, t, mat?"with matrix":"", adjust?"npot adjusted":"");
                 ShadAppend(buff);
@@ -2012,7 +2012,7 @@ const char* const* fpe_CustomFragmentShader(const char* initial, fpe_state_t* st
             }
         }
         if((alpha_test || planes || shaderblend) && is_fragcolor)
-            ShadAppend("g_FragColor = _gl4es_FragColor;\n");
+            ShadAppend("gl_FragColor = _gl4es_FragColor;\n");
 
         ShadAppend("}");
     }

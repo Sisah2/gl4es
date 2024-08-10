@@ -16,6 +16,7 @@
 #include "init.h"
 #include "loader.h"
 #include "matrix.h"
+#include "buffers.h"
 #ifdef _WIN32
 #ifdef _WINBASE_
 #define GSM_CAST(c) ((LPFILETIME)c)
@@ -889,7 +890,7 @@ void APIENTRY_GL4ES glPushCall(void *call) {
 
 void APIENTRY_GL4ES gl4es_glCallLists(GLsizei n, GLenum type, const GLvoid *lists) {
     #define call(name, type) \
-        case name: glCallList(((type *)lists)[i] + glstate->list.base); break
+        case name: gl4es_glCallList(((type *)lists)[i] + glstate->list.base); break
 
     // seriously wtf
     #define call_bytes(name, stride)                             \
@@ -1179,7 +1180,7 @@ void gl4es_scratch_vertex(int alloc) {
         LOAD_GLES(glDeleteBuffers);
         GLuint old_buffer = glstate->scratch_vertex;
         gles_glGenBuffers(1, &glstate->scratch_vertex);
-        gles_glDeleteBuffers(1, &old_buffer);
+        deleteSingleBuffer(old_buffer);
 #endif
         bindBuffer(GL_ARRAY_BUFFER, glstate->scratch_vertex);
         gles_glBufferData(GL_ARRAY_BUFFER, alloc, NULL, GL_STREAM_DRAW);
