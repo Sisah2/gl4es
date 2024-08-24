@@ -758,6 +758,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
       }
   }
 
+     ++headline;
   Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), "#define GL4ES\n", Tmp, &tmpsize);
   ++headline;
     
