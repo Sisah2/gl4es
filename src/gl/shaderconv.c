@@ -608,9 +608,6 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
       const char* GLESUseShaderLod = "#extension GL_EXT_shader_texture_lod : enable\n";
       Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), GLESUseShaderLod, Tmp, &tmpsize);
   }
-
-  Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), "#define GL4ES\n", Tmp, &tmpsize);
-  ++headline;
     
   if(!isVertex && (gl4es_find_string(Tmp, "texture2DLod"))) {
       if(hardext.shaderlod) {
@@ -760,6 +757,10 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
         }
       }
   }
+
+  Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), "#define GL4ES\n", Tmp, &tmpsize);
+  ++headline;
+    
   // builtin varying
   int nvarying = 0;
   if(strstr(Tmp, "gl_Color") || need->need_color) {
