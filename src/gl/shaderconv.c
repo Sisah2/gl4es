@@ -563,9 +563,6 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
   Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), GLESUseShaderNonConstantGlobalInitialzers, Tmp, &tmpsize);
   ++headline;
 
-  Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), "#define GL4ES\n", Tmp, &tmpsize);
-  ++headline;
-    
   int derivatives = (strstr(pBuffer, "dFdx(") || strstr(pBuffer, "dFdy(") || strstr(pBuffer, "fwidth("))?1:0;
   const char* GLESUseDerivative = "#extension GL_OES_standard_derivatives : enable\n";
   // complete fake value... A better thing should be use....
@@ -611,6 +608,10 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
       const char* GLESUseShaderLod = "#extension GL_EXT_shader_texture_lod : enable\n";
       Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), GLESUseShaderLod, Tmp, &tmpsize);
   }
+
+  Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), "#define GL4ES\n", Tmp, &tmpsize);
+  ++headline;
+    
   if(!isVertex && (gl4es_find_string(Tmp, "texture2DLod"))) {
       if(hardext.shaderlod) {
         Tmp = gl4es_inplace_replace(Tmp, &tmpsize, "texture2DLod", "texture2DLodEXT");
