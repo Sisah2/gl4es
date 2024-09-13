@@ -496,15 +496,14 @@ void APIENTRY_GL4ES gl4es_glFramebufferTexture2D(GLenum target, GLenum attachmen
             }
             int need_change = (globals4es.potframebuffer && (npot(twidth)!=twidth || npot(theight)!=theight))?1:0;
            
-	    if((tex->type==GL_FLOAT || (tex->type==GL_HALF_FLOAT_OES && !hardext.halffloatfbo)) {
+	    if(tex->type==GL_FLOAT || (tex->type==GL_HALF_FLOAT_OES && !hardext.halffloatfbo)) {
                 need_change += 2;
-            }
-	    if(tex->type==GL_FLOAT || tex->type==GL_HALF_FLOAT_OES) {
-                if(hardext.halffloatfbo && hardext.halffloattex)
+	        if(hardext.halffloatfbo && hardext.halffloattex)
 		    tex->type = GL_HALF_FLOAT_OES;
 		else
 		    tex->type = GL_UNSIGNED_BYTE;
-	    }
+            }
+
             if(tex->format==GL_BGRA && (globals4es.nobgra || !hardext.bgra8888)) {
                 if(need_change<2) need_change += 2;
                 tex->format = GL_RGBA;
