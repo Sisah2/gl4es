@@ -463,6 +463,9 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
   
   char* pBuffer = (char*)pEntry;
 
+   char extensionsList[512] = {};
+   int extensionsListsize = 2;
+
   int version120 = 0;
   char* versionString = NULL;
   if(!fpeShader) {
@@ -481,6 +484,25 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
       pBuffer = gl4es_inplace_replace(pBuffer, &sz, "\nprecision", "\n//precision");
     }
     // should do something with the extension list...
+
+//if (!isVertex)
+{
+    for(int i = 0; i < exts.size; i++)
+    {
+        char line[80];
+        char* state;
+        if (exts.ext[i].state == 0) state = "disable";
+        if (exts.ext[i].state == 1) state = "warn";
+        if (exts.ext[i].state == 2) state = "enable";
+        if (exts.ext[i].state == 3) state = "require";
+
+        sprintf(line, "#extension %.50s : %s\n", exts.ext[i].name, state);
+        strcat(extensionsList, line);
+    }
+       extensionsListsize = exts.size;
+ //      SHUT_LOGD("complete string\n%.512s \n", extensionsList);
+}
+
     if(exts.ext)
       free(exts.ext);
   }
@@ -513,7 +535,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
   }
   #endif
   //sprintf(GLESFullHeader, GLESHeader, (wanthighp && hardext.highp==1 && !isVertex)?GLESUseFragHighp:"", (wanthighp)?"highp":"mediump", (wanthighp)?"highp":"mediump");
-  sprintf(GLESFullHeader, GLESHeader[versionHeader], "", (wanthighp)?"highp":"mediump", (wanthighp)?"highp":"mediump");
+  sprintf(GLESFullHeader, GLESHeader[versionHeader], extensionsList, (wanthighp)?"highp":"mediump", (wanthighp)?"highp":"mediump");
 
   int tmpsize = strlen(pBuffer)*2+strlen(GLESFullHeader)+100;
   char* Tmp = (char*)calloc(1, tmpsize);
@@ -530,9 +552,11 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
     memmove(Tmp, newptr, strlen(newptr)+1);
     Tmp = gl4es_inplace_insert(Tmp, GLESFullHeader, Tmp, &tmpsize);
   }
-  int headline = 3;
+  int headline = 3 + extensionsListsize;
+
+/*
   // move all "#extension in header zone"
-  while (strstr(Tmp, "#extension") && strstr(Tmp, "#extension")>gl4es_getline(Tmp, headline-2)) {
+  while (strstr(Tmp, "#extension") && strstr(Tmp, "#extension")>gl4es_getline(Tmp, headline-1)) {
     char* ext = strstr(Tmp, "#extension");
     size_t l = (uintptr_t)strstr(ext, "\n")-(uintptr_t)ext + sizeof("\n");
 #ifndef _MSC_VER
@@ -542,10 +566,12 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
 #endif
     memset(e, 0, l);
     strncpy(e, ext, l-1);
+SHUT_LOGD("loop headline = %d ext = %s e = %s\n", headline, ext, e);
     Tmp = gl4es_inplace_replace_simple(Tmp, &tmpsize, e, "");
     Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, headline-2), e, Tmp, &tmpsize);
     ++headline;
   }
+*/
   // check if gl_FragDepth is used
   int fragdepth = (strstr(pBuffer, "gl_FragDepth"))?1:0;
   const char* GLESUseFragDepth = "#extension GL_EXT_frag_depth : enable\n";
@@ -559,9 +585,10 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need)
     headline++;
   }
 
-  const char* GLESUseShaderNonConstantGlobalInitialzers = "#extension GL_EXT_shader_non_constant_global_initializers : enable\n";
-  Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, 1), GLESUseShaderNonConstantGlobalInitialzers, Tmp, &tmpsize);
-  ++headline;
+if(isVertex)
+  Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, headline-1), "#define VERTEX\n", Tmp, &tmpsize);
+else
+  Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, headline-1), "#define FRAGMENT\n", Tmp, &tmpsize);
 
   Tmp = gl4es_inplace_insert(gl4es_getline(Tmp, headline-1), "#define GL4ES\n", Tmp, &tmpsize);
 

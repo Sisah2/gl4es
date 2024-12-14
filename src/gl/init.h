@@ -11,6 +11,7 @@ typedef struct _globals4es {
  int xrefresh;
  int stacktrace;
  int dxt;
+ int antialias;
  int usefb;
  int usegbm;
  int usefbo;

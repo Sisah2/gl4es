@@ -38,6 +38,7 @@ typedef struct _hardext {
     int floattexlinear;       // GL_OES_texture_float_linear
     int halffloattexlinear;   // GL_OES_texture_half_float_linear
     int clipcontrol;    // GL_EXT_clip_control
+    int framebufferTextureMultisample;    // GL_EXT_multisampled_render_to_texture
     int dxtCompression; // GL_EXT_texture_compression_s3tc
     int dxt1;           // GL_EXT_texture_compression_dxt1
     int dxt3;           // GL_EXT_texture_compression_dxt3

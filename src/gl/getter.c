@@ -205,6 +205,11 @@ void BuildExtensionsList() {
             strcat(extensions, "GL_ARB_clip_control ");
             strcat(extensions, "GL_EXT_clip_control ");
         }
+        if(hardext.framebufferTextureMultisample) {
+            strcat(extensions, "GL_EXT_multisampled_render_to_texture ");
+   //         strcat(extensions, "GL_ARB_texture_multisample ");
+   //         strcat(extensions, "ARB_texture_multisample ");
+        }
         if(hardext.depthclamp) {
             strcat(extensions, "GL_ARB_depth_clamp ");
             strcat(extensions, "GL_EXT_depth_clamp ");

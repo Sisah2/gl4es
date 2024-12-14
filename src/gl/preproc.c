@@ -618,9 +618,9 @@ char* preproc(const char* code, int keepcomments, int gl_es, extensions_t* exts,
                         else if(!strcmp(tok.str, "warn"))
                             state = 1;
                         else if(!strcmp(tok.str, "enable"))
-                            state = 1;
+                            state = 2;
                         else if(!strcmp(tok.str, "require"))
-                            state = 1;
+                            state = 2/*3*/;
                         if(state!=-1) {
                             if(exts->size==exts->cap) {
                                 exts->cap += 4;

@@ -141,6 +141,8 @@
 #define skip_glGetRenderbufferParameteriv
 #define skip_glDrawBuffers
 #define skip_glClipControlEXT
+#define skip_glFramebufferTexture2DMultisampleEXT
+#define skip_glRenderbufferStorageMultisampleEXT
 
 #define skip_glFlush
 #define skip_glFinish

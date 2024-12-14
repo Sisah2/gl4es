@@ -13,6 +13,7 @@
 #define GL_TEXTURE_ENV_MODE         0x2200
 #define GL_TEXTURE_1D               0x0DE0
 #define GL_TEXTURE_2D               0x0DE1
+#define GL_TEXTURE_2D_MULTISAMPLE   0x9100
 #define GL_TEXTURE_3D               0x806F
 #define GL_TEXTURE_WRAP_S           0x2802
 #define GL_TEXTURE_WRAP_T           0x2803

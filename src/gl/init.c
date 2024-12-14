@@ -140,6 +140,7 @@ void initialize_gl4es() {
     	  break;
     }
 
+    globals4es.antialias = ReturnEnvVarInt("LIBGL_ANTIALIAS");
 
     switch(ReturnEnvVarInt("LIBGL_FB")) {
     	case 1:

@@ -321,6 +321,7 @@ void GetHardwareExtensions(int notest)
     S("GL_OES_draw_texture ", drawtex, 1);
     S("GL_EXT_texture_rg ", rgtex, 1);
     S("GL_EXT_clip_control ", clipcontrol, 1);
+    S("GL_EXT_multisampled_render_to_texture ", framebufferTextureMultisample, 1);
     S("GL_EXT_texture_compression_s3tc ", dxtCompression, 1);
     S("GL_EXT_texture_compression_dxt1 ", dxt1, 1);
     S("GL_EXT_texture_compression_dxt3 ", dxt3, 1);

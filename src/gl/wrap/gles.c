@@ -565,6 +565,27 @@ void APIENTRY_GL4ES gl4es_glClipControlEXT(GLenum origin, GLenum depthMode) {
 AliasExport(void,glClipControlEXT,,(GLenum origin, GLenum depthMode));
 #endif
 
+#ifndef skip_glRenderbufferStorageMultisampleEXT
+void APIENTRY_GL4ES gl4es_glRenderbufferStorageMultisampleEXTT(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) {
+    LOAD_GLES_EXT(glRenderbufferStorageMultisampleEXT);
+#ifndef direct_glRenderbufferStorageMultisampleEXT
+    PUSH_IF_COMPILING(glRenderbufferStorageMultisampleEXT)
+#endif
+    gles_glRenderbufferStorageMultisampleEXT(target, samples, internalformat, width, height);
+}
+AliasExport(void,glRenderbufferStorageMultisampleEXT,,(GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height));
+#endif
+
+#ifndef skip_glFramebufferTexture2DMultisampleEXT
+void APIENTRY_GL4ES gl4es_glFramebufferTexture2DMultisampleEXT(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples) {
+    LOAD_GLES_EXT(glFramebufferTexture2DMultisampleEXT);
+#ifndef direct_glFramebufferTexture2DMultisampleEXT
+    PUSH_IF_COMPILING(glFramebufferTexture2DMultisampleEXT)
+#endif
+    gles_glFramebufferTexture2DMultisampleEXT(target, attachment, textarget, texture, level, samples);
+}
+AliasExport(void,glFramebufferTexture2DMultisampleEXT,,(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples));
+#endif
 
 #ifndef skip_glDrawElements
 void APIENTRY_GL4ES gl4es_glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid * indices) {
