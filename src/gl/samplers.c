@@ -152,10 +152,13 @@ int samplerParameterfv(glsampler_t* sampler, GLenum pname, const GLfloat *params
             switch(param) {
                 case GL_NEAREST:
                 case GL_LINEAR:
+                case GL_CUBIC_IMG:
                 case GL_NEAREST_MIPMAP_NEAREST:
                 case GL_LINEAR_MIPMAP_NEAREST:
+                case GL_CUBIC_MIPMAP_NEAREST_IMG:
                 case GL_NEAREST_MIPMAP_LINEAR:
                 case GL_LINEAR_MIPMAP_LINEAR:
+                case GL_CUBIC_MIPMAP_LINEAR_IMG:
                     sampler->min_filter = param;
                     break;
                 default:
@@ -167,6 +170,7 @@ int samplerParameterfv(glsampler_t* sampler, GLenum pname, const GLfloat *params
             switch(param) {
                 case GL_NEAREST:
                 case GL_LINEAR:
+                case GL_CUBIC_IMG:
                     sampler->mag_filter = param;
                     break;
                 default:

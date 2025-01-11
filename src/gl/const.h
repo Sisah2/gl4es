@@ -933,4 +933,9 @@
 #define GL_MIN                                          0x8007
 #define GL_MAX                                          0x8008
 
+// GL_IMG_texture_filter_cubic
+#define GL_CUBIC_IMG                                    0x9139
+#define GL_CUBIC_MIPMAP_NEAREST_IMG                     0x913A
+#define GL_CUBIC_MIPMAP_LINEAR_IMG                      0x913B
+
 #endif // _GL4ES_CONST_H_

@@ -214,6 +214,12 @@ void BuildExtensionsList() {
             strcat(extensions, "GL_ARB_depth_clamp ");
             strcat(extensions, "GL_EXT_depth_clamp ");
         }
+        if(hardext.shader_fbfetch) {
+            strcat(extensions, "GL_EXT_shader_framebuffer_fetch ");
+        }
+        if(hardext.cubicfiltering) {
+            strcat(extensions, "GL_IMG_texture_filter_cubic ");
+        }
         if(hardext.depthtex) {
             strcat(extensions, "GL_EXT_depth_texture ");
             strcat(extensions, "GL_ARB_depth_texture ");

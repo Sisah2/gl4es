@@ -226,6 +226,8 @@ int is_mipmap_needed(glsampler_t* sampler)
         case GL_NEAREST_MIPMAP_LINEAR:
         case GL_LINEAR_MIPMAP_NEAREST:
         case GL_LINEAR_MIPMAP_LINEAR:
+        case GL_CUBIC_MIPMAP_NEAREST_IMG:
+        case GL_CUBIC_MIPMAP_LINEAR_IMG:
             return 1;
         default:
             return 0;        
@@ -247,9 +249,13 @@ GLenum get_texture_min_filter(gltexture_t* texture, glsampler_t* sampler)
             case GL_LINEAR_MIPMAP_LINEAR:
                 ret = GL_LINEAR;
                 break;
+            case GL_CUBIC_MIPMAP_NEAREST_IMG:
+            case GL_CUBIC_MIPMAP_LINEAR_IMG:
+                ret = GL_CUBIC_IMG;
+                break;
         }
     }
-    if(texture->valid && (texture->type==GL_FLOAT || texture->type==GL_HALF_FLOAT_OES)) {
+    if(texture->valid && ((texture->type==GL_FLOAT && !hardext.floattexlinear) || (texture->type==GL_HALF_FLOAT_OES && !hardext.halffloattexlinear))) {
         // FLOAT textures have limited mipmap support in GLES2
         ret = minmag_float(ret);
     }

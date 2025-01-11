@@ -344,6 +344,7 @@ void GetHardwareExtensions(int notest)
     S("GL_AOS4_texture_format_RGBA8888REV", rgba8888rev, 1);
 
     S("GL_EXT_depth_clamp", depthclamp, 1);
+    S("GL_IMG_texture_filter_cubic", cubicfiltering, 1);
 
     if (hardext.esversion>1) {
         if(!globals4es.nohighp) {
@@ -376,6 +377,9 @@ void GetHardwareExtensions(int notest)
         SHUT_LOGD("Max vertex attrib: %d\n", hardext.maxvattrib);
         S("GL_OES_standard_derivatives ", derivatives, 1);
         S("GL_ARM_shader_framebuffer_fetch", shader_fbfetch, 1);
+        if(!hardext.shader_fbfetch) {
+            S("GL_EXT_shader_framebuffer_fetch ", shader_fbfetch, 1);
+        }
         S("GL_OES_get_program ", prgbinary, 1);
         if(!hardext.prgbinary) {
             S("GL_OES_get_program_binary ", prgbinary, 1);

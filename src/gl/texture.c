@@ -848,6 +848,7 @@ int minmag_npot(GLenum mag) {
         case 0: return 0;   // default is not good
         case GL_NEAREST:
         case GL_LINEAR:
+        case GL_CUBIC_IMG:
             return 1;
     }
     return 0;
@@ -859,6 +860,10 @@ GLenum minmag_forcenpot(GLenum filt) {
         case GL_LINEAR_MIPMAP_NEAREST:
         case GL_LINEAR_MIPMAP_LINEAR:
             return GL_LINEAR;
+        case GL_CUBIC_IMG:
+        case GL_CUBIC_MIPMAP_NEAREST_IMG:
+        case GL_CUBIC_MIPMAP_LINEAR_IMG:
+            return GL_CUBIC_IMG;
         /*case 0:
         case GL_NEAREST:
         case GL_NEAREST_MIPMAP_NEATEST:
@@ -883,11 +888,23 @@ GLenum wrap_forcenpot(GLenum wrap) {
 GLenum minmag_float(GLenum filt) {
     switch(filt) {
         case GL_LINEAR:
+        case GL_CUBIC_IMG:
             return GL_NEAREST;
         case GL_LINEAR_MIPMAP_NEAREST:
         case GL_LINEAR_MIPMAP_LINEAR:
         case GL_NEAREST_MIPMAP_LINEAR:
             return GL_NEAREST_MIPMAP_NEAREST;
+        case GL_CUBIC_MIPMAP_NEAREST_IMG:
+        case GL_CUBIC_MIPMAP_LINEAR_IMG:
+            return GL_NEAREST_MIPMAP_NEAREST;
+/*
+        case GL_CUBIC_IMG:
+            return GL_LINEAR;
+        case GL_CUBIC_MIPMAP_NEAREST_IMG:
+            return GL_LINEAR_MIPMAP_NEAREST;
+        case GL_CUBIC_MIPMAP_LINEAR_IMG:
+            return GL_LINEAR_MIPMAP_LINEAR;
+*/
         default:
             return filt;
     }

@@ -457,6 +457,7 @@ SHUT_LOGD("framebufferTexture2D GL_TEXTURE_2D\n");
 
 void APIENTRY_GL4ES gl4es_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level) {
     DBG(printf("glFramebufferTexture2D(%s, %s, %s, %u, %i) glstate->fbo.current_fb=%d (draw=%d, read=%d)\n", PrintEnum(target), PrintEnum(attachment), PrintEnum(textarget), texture, level, glstate->fbo.current_fb->id, glstate->fbo.fbo_draw->id, glstate->fbo.fbo_read->id);)
+
     static GLuint scrap_tex = 0;
     static int scrap_width = 0;
     static int scrap_height = 0;

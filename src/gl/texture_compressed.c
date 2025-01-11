@@ -106,6 +106,9 @@ GLenum compressedMinMipmap(GLenum param)
         case GL_LINEAR_MIPMAP_NEAREST:
         case GL_LINEAR_MIPMAP_LINEAR:
             return GL_LINEAR;
+        case GL_CUBIC_MIPMAP_NEAREST_IMG:
+        case GL_CUBIC_MIPMAP_LINEAR_IMG:
+            return GL_CUBIC_IMG;
         default:
             return param;
     }
