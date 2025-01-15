@@ -136,6 +136,7 @@ enum FORMAT {
     FORMAT_void_GLuint_GLfloat_GLfloat_GLfloat,
     FORMAT_void_GLuint_GLfloat_GLfloat_GLfloat_GLfloat,
     FORMAT_void_GLuint_GLint_GLenum_GLboolean_GLsizei_const_GLvoid___GENPT__,
+    FORMAT_void_GLenum_GLenum___GENPT__,
 };
 
 typedef void (APIENTRY*FUNC_void_GLenum)(GLenum texture);
@@ -3669,6 +3670,14 @@ packed_call_t* APIENTRY_GL4ES glCopyPackedCall(const packed_call_t *packed);
 #define glVertexAttribIPointer_INDEXED INDEXED_void_GLuint_GLint_GLenum_GLsizei_const_GLvoid___GENPT__
 #define glVertexAttribIPointer_FORMAT FORMAT_void_GLuint_GLint_GLenum_GLsizei_const_GLvoid___GENPT__
 
+#define glClipControlEXT_INDEX 243
+#define glClipControlEXT_RETURN void
+#define glClipControlEXT_ARG_NAMES origin, depthMode
+#define glClipControlEXT_ARG_EXPAND GLenum origin, GLenum depthMode
+#define glClipControlEXT_PACKED PACKED_void_GLenum_GLenum___GENPT__
+#define glClipControlEXT_INDEXED INDEXED_void_GLenum_GLenum___GENPT__
+#define glClipControlEXT_FORMAT FORMAT_void_GLenum_GLenum___GENPT__
+
 void APIENTRY_GL4ES gl4es_glActiveTexture(glActiveTexture_ARG_EXPAND);
 typedef void (APIENTRY_GLES * glActiveTexture_PTR)(glActiveTexture_ARG_EXPAND);
 void APIENTRY_GL4ES gl4es_glAlphaFunc(glAlphaFunc_ARG_EXPAND);
@@ -3779,6 +3788,10 @@ void APIENTRY_GL4ES gl4es_glDrawArrays(glDrawArrays_ARG_EXPAND);
 typedef void (APIENTRY_GLES * glDrawArrays_PTR)(glDrawArrays_ARG_EXPAND);
 void APIENTRY_GL4ES gl4es_glDrawBuffers(glDrawBuffers_ARG_EXPAND);
 typedef void (APIENTRY_GLES * glDrawBuffers_PTR)(glDrawBuffers_ARG_EXPAND);
+
+void APIENTRY_GL4ES gl4es_glClipControlEXT(glClipControlEXT_ARG_EXPAND);
+typedef void (APIENTRY_GLES * glClipControlEXT_PTR)(glClipControlEXT_ARG_EXPAND);
+
 void APIENTRY_GL4ES gl4es_glDrawElements(glDrawElements_ARG_EXPAND);
 typedef void (APIENTRY_GLES * glDrawElements_PTR)(glDrawElements_ARG_EXPAND);
 void APIENTRY_GL4ES gl4es_glDrawTexf(glDrawTexf_ARG_EXPAND);
@@ -4736,6 +4749,19 @@ typedef void (APIENTRY_GLES * glVertexAttribIPointer_PTR)(glVertexAttribIPointer
     glPushCall((void *)packed_data); \
 }
 #endif
+
+#ifndef direct_glClipControlEXT
+#define push_glClipControlEXT(origin, depthMode) { \
+    glClipControlEXT_PACKED *packed_data = malloc(sizeof(glClipControlEXT_PACKED)); \
+    packed_data->format = glClipControlEXT_FORMAT; \
+    packed_data->func = gl4es_glClipControlEXT; \
+    packed_data->args.a1 = (GLenum)origin; \
+    packed_data->args.a2 = (GLenum)depthMode; \
+    glPushCall((void *)packed_data); \
+}
+#endif
+
+
 #ifndef direct_glDrawElements
 #define push_glDrawElements(mode, count, type, indices) { \
     glDrawElements_PACKED *packed_data = malloc(sizeof(glDrawElements_PACKED)); \

@@ -140,6 +140,7 @@
 #define skip_glGetFramebufferAttachmentParameteriv
 #define skip_glGetRenderbufferParameteriv
 #define skip_glDrawBuffers
+#define skip_glClipControlEXT
 
 #define skip_glFlush
 #define skip_glFinish

@@ -552,6 +552,20 @@ void APIENTRY_GL4ES gl4es_glDrawBuffers(GLsizei n, const GLenum * bufs) {
 }
 AliasExport(void,glDrawBuffers(,,GLsizei n, const GLenum * bufs));
 #endif
+
+
+#ifndef skip_glClipControlEXT
+void APIENTRY_GL4ES gl4es_glClipControlEXT(GLenum origin, GLenum depthMode) {
+    LOAD_GLES_EXT(glClipControlEXT);
+#ifndef direct_glClipControlEXT
+    PUSH_IF_COMPILING(glClipControlEXT)
+#endif
+    gles_glClipControlEXT(origin, depthMode);
+}
+AliasExport(void,glClipControlEXT,,(GLenum origin, GLenum depthMode));
+#endif
+
+
 #ifndef skip_glDrawElements
 void APIENTRY_GL4ES gl4es_glDrawElements(GLenum mode, GLsizei count, GLenum type, const GLvoid * indices) {
     LOAD_GLES(glDrawElements);

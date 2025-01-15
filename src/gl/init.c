@@ -121,6 +121,25 @@ void initialize_gl4es() {
     env(LIBGL_XREFRESH, globals4es.xrefresh, "xrefresh will be called on cleanup");
     env(LIBGL_STACKTRACE, globals4es.stacktrace, "stacktrace will be printed on crash");
 
+    switch(ReturnEnvVarInt("LIBGL_DXT")) {
+    	case 1:
+        SHUT_LOGD("forcing software DXT decompression\n");
+        globals4es.dxt = 1;
+    	  break;
+    	case 2:
+        SHUT_LOGD("not exposing DXT support\n");
+        globals4es.dxt = 2;
+    	  break;
+    	case 3:
+        SHUT_LOGD("handling DXT as is\n");
+        globals4es.dxt = 3;
+    	  break;
+    	default:
+        SHUT_LOGD("using hardware DXT if supported + software fallback\n");
+        globals4es.dxt = 0;
+    	  break;
+    }
+
 
     switch(ReturnEnvVarInt("LIBGL_FB")) {
     	case 1:
@@ -626,7 +645,7 @@ void initialize_gl4es() {
     env(LIBGL_NOES2COMPAT, globals4es.noes2, "Don't expose GLX_EXT_create_context_es2_profile extension");
     env(LIBGL_NORMALIZE, globals4es.normalize, "Force normals to be normalized on FPE shaders");
 
-    globals4es.dbgshaderconv=ReturnEnvVarIntDef("LIBGL_DBGSHADERCONV",0);
+    globals4es.dbgshaderconv=1;//ReturnEnvVarIntDef("LIBGL_DBGSHADERCONV",0);
     if(globals4es.dbgshaderconv) {
       if(globals4es.dbgshaderconv==1)
           globals4es.dbgshaderconv=15;
@@ -677,6 +696,7 @@ void initialize_gl4es() {
         if(globals4es.nopsa==0) {
             cwd[0]='\0';
             // TODO: What to do on ANDROID and EMSCRIPTEN?
+/*
             const char* custom_psa = GetEnvVar("LIBGL_PSA_FOLDER");
 #ifdef __linux__
             const char* home = GetEnvVar("HOME");
@@ -693,8 +713,16 @@ void initialize_gl4es() {
             else
               strcpy(cwd, "PROGDIR:");
 #endif
+
+*/
+
+            strcpy(cwd, GetEnvVar("OPENMW_USER_FILE_STORAGE"));
+
             if(strlen(cwd)) {
-                strcat(cwd, ".gl4es.psa");
+                if(globals4es.nohighp)
+                    strcat(cwd, ".gl4es.psa-mediump");
+                else
+                    strcat(cwd, ".gl4es.psa-highp");
                 fpe_InitPSA(cwd);
                 fpe_readPSA();
             }

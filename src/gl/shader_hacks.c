@@ -193,13 +193,25 @@ static const hack_t gl4es_hacks[] = {
 {"uniform highp \tvec2 \t\tuTcScale;",
 1, {"uniform mediump vec2 \t\tuTcScale;"}},
 
-// for OpenMW
-{"uniform bool simpleWater = false;",
-1, {"uniform bool simpleWater;"}},
-
 // for Lethal League
 {"uniform vec4 Color = vec4(1.0, 1.0, 1.0, 1.0);",
 1, {"uniform vec4 Color;"}},
+
+// openmw
+{"uniform bool useAdvancedShader = false;",
+1, {"uniform bool useAdvancedShader;"}},
+
+{"uniform @builtinSampler omw_SamplerDepth;",
+1, {"uniform highp @builtinSampler omw_SamplerDepth;"}},
+
+{"uniform sampler2D orthoDepthMap;",
+1, {"uniform highp sampler2D orthoDepthMap;"}},
+
+{"uniform sampler2D opaqueDepthTex;",
+1, {"uniform highp sampler2D opaqueDepthTex;"}},
+
+{"uniform vec2 scaling = vec2(1.0, 1.0);",
+1, {"uniform vec2 scaling;"}},
 
 // for ioQuake3
 {"float c[5] = float[5](1.0, 0.9238795325, 0.7071067812, 0.3826834324, 0.0);",

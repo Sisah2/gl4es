@@ -110,11 +110,6 @@ void BuildExtensionsList() {
                 "GL_EXT_draw_range_elements "
                 "GL_EXT_bgra "
                 "GL_ARB_texture_compression "
-                "GL_EXT_texture_compression_s3tc "
-                "GL_OES_texture_compression_S3TC "
-                "GL_EXT_texture_compression_dxt1 "
-                "GL_EXT_texture_compression_dxt3 "
-                "GL_EXT_texture_compression_dxt5 "
                 "GL_ARB_point_parameters "
                 "GL_EXT_point_parameters "
                 "GL_EXT_stencil_wrap "
@@ -133,6 +128,15 @@ void BuildExtensionsList() {
                 "GL_NV_blend_square "
 //                "GL_EXT_blend_logic_op "
 				);
+
+        if (globals4es.dxt != 2)
+            strcat(extensions, "GL_EXT_texture_compression_s3tc "
+                "GL_OES_texture_compression_S3TC "
+                "GL_EXT_texture_compression_dxt1 "
+                "GL_EXT_texture_compression_dxt3 "
+                "GL_EXT_texture_compression_dxt5 ");
+
+
         if(!globals4es.notexrect)
             strcat(extensions, "GL_ARB_texture_rectangle ");
         if(globals4es.vabgra)
@@ -177,15 +181,29 @@ void BuildExtensionsList() {
         if(hardext.floattex || (globals4es.floattex==2)) {
             strcat(extensions, "GL_EXT_texture_float ");
             strcat(extensions, "GL_ARB_texture_float ");
+            strcat(extensions, "GL_OES_texture_float ");
+        }
+        if(hardext.floattexlinear || (globals4es.floattex==2)) {
+            strcat(extensions, "GL_EXT_texture_float_linear ");
+            strcat(extensions, "GL_OES_texture_float_linear ");
         }
         if(hardext.halffloattex || (globals4es.floattex==2)) {
             strcat(extensions, "GL_EXT_texture_half_float ");
+            strcat(extensions, "GL_OES_texture_half_float ");
+        }
+        if(hardext.halffloattexlinear || (globals4es.floattex==2)) {
+            strcat(extensions, "GL_EXT_texture_half_float_linear ");
+            strcat(extensions, "GL_OES_texture_half_float_linear ");
         }
         if(hardext.floatfbo || (globals4es.floattex==2)) {
             strcat(extensions, "GL_EXT_color_buffer_float ");
         }
         if(hardext.halffloatfbo || (globals4es.floattex==2)) {
             strcat(extensions, "GL_EXT_color_buffer_half_float ");
+        }
+        if(hardext.clipcontrol) {
+            strcat(extensions, "GL_ARB_clip_control ");
+            strcat(extensions, "GL_EXT_clip_control ");
         }
         if(hardext.depthtex) {
             strcat(extensions, "GL_EXT_depth_texture ");
